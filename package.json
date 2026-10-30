@@ -1,0 +1,55 @@
+{
+  "name": "@nod3solutions/n8n-nodes-work3",
+  "version": "0.1.0",
+  "description": "WORK³ nodes for n8n: triggers and actions for items, projects, comments, chats and files.",
+  "keywords": [
+    "n8n-community-node-package",
+    "work3",
+    "project management"
+  ],
+  "license": "MIT",
+  "homepage": "https://work.nod3.se/docs/integrations/automation/",
+  "author": {
+    "name": "NOD³ Solutions AB",
+    "email": "privacy@nod3.se"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/NOD3-Solutions/n8n-nodes-work3.git"
+  },
+  "main": "index.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "n8n-node build",
+    "dev": "n8n-node dev",
+    "lint": "n8n-node lint",
+    "lint:fix": "n8n-node lint --fix",
+    "typecheck": "tsc --noEmit",
+    "prepublishOnly": "n8n-node prerelease"
+  },
+  "n8n": {
+    "n8nNodesApiVersion": 1,
+    "credentials": [
+      "dist/credentials/Work3Api.credentials.js"
+    ],
+    "nodes": [
+      "dist/nodes/Work3/Work3.node.js",
+      "dist/nodes/Work3/Work3Trigger.node.js"
+    ],
+    "strict": true
+  },
+  "devDependencies": {
+    "@n8n/node-cli": "0.53.1",
+    "eslint": "9.29.0",
+    "n8n-workflow": "2.16.0",
+    "typescript": "5.9.3"
+  },
+  "peerDependencies": {
+    "n8n-workflow": "*"
+  },
+  "bugs": {
+    "url": "https://github.com/NOD3-Solutions/n8n-nodes-work3/issues"
+  }
+}

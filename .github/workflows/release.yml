@@ -1,0 +1,54 @@
+name: CI and release
+
+# Lint and build on every push and pull request. Publishing to npm happens
+# only from main when someone runs this workflow by hand with "Publish"
+# ticked, always with npm provenance (n8n requires it for verified nodes).
+on:
+  push:
+  pull_request:
+  workflow_dispatch:
+    inputs:
+      publish:
+        description: Publish this version to npm
+        type: boolean
+        default: false
+
+permissions:
+  contents: read
+
+jobs:
+  check:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+          cache: npm
+      - run: npm ci
+      - run: npm run lint
+      - run: npm run build
+
+  publish:
+    needs: check
+    if: github.event_name == 'workflow_dispatch' && inputs.publish && github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: npm
+    permissions:
+      contents: read
+      id-token: write
+    steps:
+      - uses: actions/checkout@v4
+      # Node 24 ships npm 11, which publishes through npm's Trusted publishing
+      # (OIDC, no token) once it is set up for the package; until then NPM_TOKEN.
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 24
+          registry-url: https://registry.npmjs.org
+      - run: npm ci
+      - run: npm run build
+      # RELEASE_MODE lets the package's prepublishOnly guard through: only this job publishes.
+      - run: npm publish --provenance --access public
+        env:
+          RELEASE_MODE: '1'
+          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
