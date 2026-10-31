@@ -39,8 +39,8 @@ jobs:
       id-token: write
     steps:
       - uses: actions/checkout@v4
-      # Node 24 ships npm 11, which publishes through npm's Trusted publishing
-      # (OIDC, no token) once it is set up for the package; until then NPM_TOKEN.
+      # Node 24 ships npm 11, which publishes through npm's Trusted publishing:
+      # npm trusts this workflow and environment over OIDC, so no token is stored.
       - uses: actions/setup-node@v4
         with:
           node-version: 24
@@ -51,4 +51,3 @@ jobs:
       - run: npm publish --provenance --access public
         env:
           RELEASE_MODE: '1'
-          NODE_AUTH_TOKEN: ${{ secrets.NPM_TOKEN }}
