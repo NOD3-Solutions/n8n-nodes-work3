@@ -2,7 +2,7 @@
 
 [WORK³](https://work.nod3.se) nodes for [n8n](https://n8n.io).
 
-- **WORK³**: create and update items and projects, add comments, post in a project chat, upload files, get and search items and projects. Projects, statuses, types, priorities, people and tags are picked from lists.
+- **WORK³**: create, update and archive items, create and update projects, add comments, post in a project chat, upload files, get and search items and projects. Projects, statuses, types, priorities, people and tags are picked from lists.
 - **WORK³ Trigger**: starts a workflow when an item is created, changed, done or due tomorrow, when someone comments, or when a project is created, changed or archived. Item triggers can be limited to projects, people and statuses.
 
 ## Install

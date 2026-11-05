@@ -85,6 +85,7 @@ const properties: INodeProperties[] = [
     noDataExpression: true,
     displayOptions: { show: { resource: ['item'] } },
     options: [
+      { name: 'Archive', value: 'archive', action: 'Archive an item', description: 'Archive an item and its sub-items. They leave boards and lists and can be restored in WORK³.' },
       { name: 'Create', value: 'create', action: 'Create an item' },
       { name: 'Get', value: 'get', action: 'Get an item' },
       { name: 'Search', value: 'search', action: 'Find items' },
@@ -94,7 +95,7 @@ const properties: INodeProperties[] = [
   },
   projectPicker('item', ['create'], 'The project the item goes in'),
   { displayName: 'Title', name: 'title', type: 'string', default: '', required: true, displayOptions: show('item', ['create']) },
-  itemRef(['get', 'update']),
+  itemRef(['archive', 'get', 'update']),
   {
     displayName: 'Additional Fields',
     name: 'fields',
@@ -114,6 +115,7 @@ const properties: INodeProperties[] = [
     options: sorted([
       ...itemFields,
       { displayName: 'Title', name: 'title', type: 'string', default: '' },
+      { displayName: 'Archived', name: 'archived', type: 'boolean', default: false, description: 'Whether the item is archived. On archives it with its sub-items, off restores them.' },
       { displayName: 'Close Even if Waiting', name: 'force', type: 'boolean', default: false, description: 'Whether to close an item that still waits on others, where the workspace only warns' },
     ]),
   },
@@ -315,6 +317,8 @@ async function run(this: IExecuteFunctions, resource: string, operation: string,
       return work3Request.call(this, 'POST', 'items', { project: param<string>('project'), title: param<string>('title'), ...fields })
     }
     if (operation === 'get') return work3Request.call(this, 'GET', `items/${ref()}`)
+    // Automations archive items, never delete them: archived items keep their history and can be restored.
+    if (operation === 'archive') return work3Request.call(this, 'PATCH', `items/${ref()}`, { archived: true })
     if (operation === 'update') {
       const fields = clean(param<IDataObject>('fields', {}), ['assigneeId', 'priorityId', 'dueDate', 'parentRef'])
       return work3Request.call(this, 'PATCH', `items/${ref()}`, fields)

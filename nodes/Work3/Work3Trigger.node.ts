@@ -90,6 +90,7 @@ export class Work3Trigger implements INodeType {
             default: [],
             description: 'Item Changed only: start only when one of these changed',
             options: [
+              { name: 'Archived or Restored', value: 'archived' },
               { name: 'Assignee', value: 'assigneeId' },
               { name: 'Description', value: 'description' },
               { name: 'Due Date', value: 'dueDate' },
