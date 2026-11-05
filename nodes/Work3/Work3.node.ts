@@ -153,6 +153,7 @@ const properties: INodeProperties[] = [
     noDataExpression: true,
     displayOptions: { show: { resource: ['project'] } },
     options: [
+      { name: 'Archive', value: 'archive', action: 'Archive a project', description: 'Archive a project. It leaves lists and boards and can be restored in WORK³.' },
       { name: 'Create', value: 'create', action: 'Create a project' },
       { name: 'Get', value: 'get', action: 'Get a project' },
       { name: 'Get Many', value: 'getAll', action: 'Get many projects' },
@@ -161,7 +162,7 @@ const properties: INodeProperties[] = [
     default: 'create',
   },
   { displayName: 'Name', name: 'name', type: 'string', default: '', required: true, displayOptions: show('project', ['create']) },
-  projectPicker('project', ['get', 'update']),
+  projectPicker('project', ['archive', 'get', 'update']),
   {
     displayName: 'Additional Fields',
     name: 'fields',
@@ -336,6 +337,7 @@ async function run(this: IExecuteFunctions, resource: string, operation: string,
       return work3Request.call(this, 'POST', 'projects', { name: param<string>('name'), ...fields })
     }
     if (operation === 'get') return work3Request.call(this, 'GET', `projects/${key()}`)
+    if (operation === 'archive') return work3Request.call(this, 'PATCH', `projects/${key()}`, { archived: true })
     if (operation === 'update') {
       const fields = clean(param<IDataObject>('fields', {}), ['leadId', 'client', 'contactName', 'contactEmail', 'startDate', 'dueDate'])
       return work3Request.call(this, 'PATCH', `projects/${key()}`, fields)
