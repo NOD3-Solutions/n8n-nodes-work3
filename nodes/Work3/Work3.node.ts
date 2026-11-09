@@ -43,7 +43,7 @@ const itemFields: INodeProperties[] = [
   { displayName: 'Parent Reference', name: 'parentRef', type: 'string', default: '', placeholder: 'WEB-3' },
   { displayName: 'Priority Name or ID', name: 'priorityId', type: 'options', typeOptions: { loadOptionsMethod: 'getPriorities' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
   { displayName: 'Status Name or ID', name: 'statusId', type: 'options', typeOptions: { loadOptionsMethod: 'getStatuses' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
-  { displayName: 'Tag Name Names or IDs', name: 'labels', type: 'multiOptions', typeOptions: { loadOptionsMethod: 'getLabels' }, default: [], description: 'Replaces the tags. New names are created. Choose from the list, or specify names using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.' },
+  { displayName: 'Tag Names or IDs', name: 'labels', type: 'multiOptions', typeOptions: { loadOptionsMethod: 'getLabels' }, default: [], description: 'Replaces the tags; new names are created. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.' },
   { displayName: 'Type Name or ID', name: 'typeId', type: 'options', typeOptions: { loadOptionsMethod: 'getTypes' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
 ]
 
@@ -56,7 +56,7 @@ const projectFields: INodeProperties[] = [
   { displayName: 'Due Date', name: 'dueDate', type: 'string', default: '', placeholder: 'YYYY-MM-DD' },
   { displayName: 'Lead Name or ID', name: 'leadId', type: 'options', typeOptions: { loadOptionsMethod: 'getMembers' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
   { displayName: 'Start Date', name: 'startDate', type: 'string', default: '', placeholder: 'YYYY-MM-DD' },
-  { displayName: 'Tag Name Names or IDs', name: 'labels', type: 'multiOptions', typeOptions: { loadOptionsMethod: 'getLabels' }, default: [], description: 'Replaces the tags. Choose from the list, or specify names using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.' },
+  { displayName: 'Tag Names or IDs', name: 'labels', type: 'multiOptions', typeOptions: { loadOptionsMethod: 'getLabels' }, default: [], description: 'Replaces the tags. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.' },
   { displayName: 'Value', name: 'valueAmount', type: 'number', default: 0 },
   { displayName: 'Value Currency', name: 'valueCurrency', type: 'string', default: 'SEK', placeholder: 'SEK' },
 ]
@@ -128,7 +128,7 @@ const properties: INodeProperties[] = [
     displayOptions: show('item', ['search']),
     options: [
       { displayName: 'Assignee Name or ID', name: 'assignee', type: 'options', typeOptions: { loadOptionsMethod: 'getMembers' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
-      { displayName: 'Project Name or ID', name: 'project', type: 'options', typeOptions: { loadOptionsMethod: 'getProjects' }, default: '', description: 'Choose from the list, or specify a key using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.' },
+      { displayName: 'Project Name or ID', name: 'project', type: 'options', typeOptions: { loadOptionsMethod: 'getProjects' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
       { displayName: 'Search Text', name: 'q', type: 'string', default: '', description: 'Every word must be in the title or description. A reference such as WEB-12 finds that item.' },
       { displayName: 'Status Name or ID', name: 'status', type: 'options', typeOptions: { loadOptionsMethod: 'getStatuses' }, default: '', description: 'Choose from the list, or specify an ID using an <a href="https://docs.n8n.io/code/expressions/">expression</a>' },
       { displayName: 'Updated Since', name: 'updatedSince', type: 'dateTime', default: '' },
@@ -198,7 +198,15 @@ const properties: INodeProperties[] = [
       { displayName: 'Name', name: 'name', type: 'string', default: '' },
     ]),
   },
-  { displayName: 'Include Archived', name: 'archived', type: 'boolean', default: false, displayOptions: show('project', ['getAll']) },
+  {
+    displayName: 'Options',
+    name: 'options',
+    type: 'collection',
+    placeholder: 'Add Option',
+    default: {},
+    displayOptions: show('project', ['getAll']),
+    options: [{ displayName: 'Include Archived', name: 'archived', type: 'boolean', default: false, description: 'Whether to also return archived projects' }],
+  },
 
   // Comment
   {
@@ -344,7 +352,7 @@ async function run(this: IExecuteFunctions, resource: string, operation: string,
     }
     if (operation === 'getAll') {
       const { data } = await work3Request.call(this, 'GET', 'projects')
-      return param<boolean>('archived', false) ? data : (data as IDataObject[]).filter((p) => !p.archived)
+      return param<IDataObject>('options', {}).archived ? data : (data as IDataObject[]).filter((p) => !p.archived)
     }
   }
 

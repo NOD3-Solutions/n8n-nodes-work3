@@ -73,7 +73,7 @@ export class Work3Trigger implements INodeType {
             type: 'multiOptions',
             typeOptions: { loadOptionsMethod: 'getProjects' },
             default: [],
-            description: 'Only items in these projects. Choose from the list, or specify keys using an <a href="https://docs.n8n.io/code/expressions/">expression</a>. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
+            description: 'Only items in these projects. Choose from the list, or specify IDs using an <a href="https://docs.n8n.io/code/expressions/">expression</a>.',
           },
           {
             displayName: 'Assignee Names or IDs',
